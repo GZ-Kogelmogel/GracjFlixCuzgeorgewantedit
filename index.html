@@ -6,47 +6,57 @@
 <title>Gracj Flix</title>
 
 <style>
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   background: #000;
   font-family: Arial, sans-serif;
   color: white;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
+/* background */
 .bg {
   position: fixed;
   inset: 0;
   background: radial-gradient(circle at top, rgba(255,0,0,0.15), transparent 60%);
+  z-index: -1;
 }
 
+/* screens */
 .screen {
-  position: absolute;
-  inset: 0;
+  min-height: 100dvh;
+  width: 100%;
   display: none;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  padding: 20px;
 }
 
 #login { display: flex; }
 
 .brand {
-  font-size: 46px;
+  font-size: clamp(28px, 6vw, 46px);
   font-weight: 800;
-  margin-bottom: 40px;
-  letter-spacing: 3px;
+  margin-bottom: 30px;
+  letter-spacing: 2px;
   color: #e50914;
+  text-align: center;
 }
 
+/* login profile */
 .profile {
   text-align: center;
   cursor: pointer;
 }
 
 .pfp {
-  width: 120px;
-  height: 120px;
+  width: 90px;
+  height: 90px;
   border-radius: 10px;
   border: 2px solid #e50914;
 }
@@ -56,16 +66,18 @@ body {
   opacity: 0.8;
 }
 
+/* HOME GRID (this is the glow-up) */
 .grid {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+  width: 100%;
+  max-width: 1000px;
+  padding: 10px;
 }
 
 .card {
-  width: 200px;
-  height: 260px;
+  height: 160px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,42 +86,72 @@ body {
   border: 1px solid rgba(255,0,0,0.25);
   background: rgba(255,255,255,0.03);
   cursor: pointer;
-  transition: 0.25s;
+  transition: 0.2s ease;
+  padding: 10px;
+}
+
+.card h1 {
+  font-size: 16px;
+}
+
+.card:active {
+  transform: scale(0.97);
 }
 
 .card:hover {
-  transform: scale(1.06);
+  transform: scale(1.03);
   border-color: rgba(255,0,0,0.6);
 }
 
+/* PLAYER */
 .topbar {
-  width: 80%;
+  width: 100%;
   max-width: 1000px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 10px;
   font-size: 12px;
+  gap: 10px;
 }
 
 .backbtn {
   cursor: pointer;
-  padding: 8px 12px;
+  padding: 10px 14px;
   border: 1px solid rgba(255,0,0,0.3);
   border-radius: 8px;
+  flex-shrink: 0;
 }
 
 .frame {
-  width: 80%;
+  width: 100%;
   max-width: 1000px;
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid rgba(255,0,0,0.25);
 }
 
+/* RESPONSIVE IFRAME (no more fixed 600px nonsense 💀) */
 iframe {
   width: 100%;
-  height: 600px;
+  height: 60vh;
+  min-height: 300px;
   border: none;
+}
+
+/* small phones tweaks */
+@media (max-width: 480px) {
+  .card {
+    height: 140px;
+  }
+
+  .card h1 {
+    font-size: 14px;
+  }
+
+  iframe {
+    height: 55vh;
+  }
 }
 </style>
 </head>
@@ -130,43 +172,22 @@ iframe {
 
 <!-- HOME -->
 <div class="screen" id="home">
-
   <div class="grid">
 
-    <div class="card" onclick="openShow('young')">
-      <h1>Young Gracj</h1>
-    </div>
-
-    <div class="card" onclick="openShow('happy1')">
-      <h1>Happy Gracj 1</h1>
-    </div>
-
-    <div class="card" onclick="openShow('happy2')">
-      <h1>Happy Gracj 2</h1>
-    </div>
-
-    <div class="card" onclick="openShow('whos')">
-      <h1>In Whose Gracj</h1>
-    </div>
-
-    <div class="card" onclick="openShow('american')">
-      <h1>American Gracj</h1>
-    </div>
-
-    <div class="card" onclick="openShow('stranger')">
-      <h1>Stranger Gracj</h1>
-    </div>
-
-    <div class="card" onclick="openShow('adole')">
-      <h1>Adolegracj</h1>
-    </div>
+    <div class="card" onclick="openShow('young')"><h1>Young Gracj</h1></div>
+    <div class="card" onclick="openShow('happy1')"><h1>Happy Gracj 1</h1></div>
+    <div class="card" onclick="openShow('happy2')"><h1>Happy Gracj 2</h1></div>
+    <div class="card" onclick="openShow('whos')"><h1>In Whose Gracj</h1></div>
+    <div class="card" onclick="openShow('american')"><h1>American Gracj</h1></div>
+    <div class="card" onclick="openShow('stranger')"><h1>Stranger Gracj</h1></div>
+    <div class="card" onclick="openShow('adole')"><h1>Adolegracj</h1></div>
 
   </div>
-
 </div>
 
 <!-- PLAYER -->
 <div class="screen" id="player">
+
   <div class="topbar">
     <div id="title">NOW PLAYING</div>
     <div class="backbtn" onclick="goHomeAndPause()">← Back</div>
@@ -196,40 +217,18 @@ function openShow(type){
   const frame = document.getElementById("frame");
   const title = document.getElementById("title");
 
-  if(type === "young"){
-    frame.src = "https://www.vidking.net/embed/tv/71728/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true";
-    title.innerText = "NOW PLAYING: Young Gracj";
-  }
+  const data = {
+    young: ["https://www.vidking.net/embed/tv/71728/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true", "Young Gracj"],
+    happy1: ["https://www.vidking.net/embed/movie/9614?color=e50914&autoPlay=true", "Happy Gracj 1"],
+    happy2: ["https://www.vidking.net/embed/movie/1263256?color=e50914&autoPlay=true", "Happy Gracj 2"],
+    whos: ["https://www.vidking.net/embed/movie/1381066?color=e50914&autoPlay=true", "In Whose Gracj"],
+    american: ["https://www.vidking.net/embed/tv/1433/1/1?autoPlay=true&nextEpisode=true&episodeSelector=true", "American Gracj"],
+    stranger: ["https://www.vidking.net/embed/tv/66732/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true", "Stranger Gracj"],
+    adole: ["https://www.vidking.net/embed/tv/249042/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true", "Adolegracj"]
+  };
 
-  if(type === "happy1"){
-    frame.src = "https://www.vidking.net/embed/movie/9614?color=e50914&autoPlay=true";
-    title.innerText = "NOW PLAYING: Happy Gracj 1";
-  }
-
-  if(type === "happy2"){
-    frame.src = "https://www.vidking.net/embed/movie/1263256?color=e50914&autoPlay=true";
-    title.innerText = "NOW PLAYING: Happy Gracj 2";
-  }
-
-  if(type === "whos"){
-    frame.src = "https://www.vidking.net/embed/movie/1381066?color=e50914&autoPlay=true";
-    title.innerText = "NOW PLAYING: In Whose Gracj";
-  }
-
-  if(type === "american"){
-    frame.src = "https://www.vidking.net/embed/tv/1433/1/1?autoPlay=true&nextEpisode=true&episodeSelector=true";
-    title.innerText = "NOW PLAYING: American Gracj";
-  }
-
-  if(type === "stranger"){
-    frame.src = "https://www.vidking.net/embed/tv/66732/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true";
-    title.innerText = "NOW PLAYING: Stranger Gracj";
-  }
-
-  if(type === "adole"){
-    frame.src = "https://www.vidking.net/embed/tv/249042/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true";
-    title.innerText = "NOW PLAYING: Adolegracj";
-  }
+  frame.src = data[type][0];
+  title.innerText = "NOW PLAYING: " + data[type][1];
 
   show("player");
 }
